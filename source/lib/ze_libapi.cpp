@@ -16,7 +16,7 @@ extern "C" {
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Initialize the 'oneAPI' driver(s)
-/// 
+///
 /// @details
 ///     - The application must call this function before calling any other
 ///       function.
@@ -28,7 +28,7 @@ extern "C" {
 ///     - The application may call this function from simultaneous threads.
 ///     - The implementation of this function must be thread-safe for scenarios
 ///       where multiple libraries may initialize the driver(s) simultaneously.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -44,9 +44,9 @@ zeInit(
 {
     ze_result_t result = ZE_RESULT_SUCCESS;
     if (!ze_lib::context) ze_lib::context = new ze_lib::context_t;
-  
-    std::call_once(ze_lib::context->initOnce, [&result]() {
-        result = ze_lib::context->Init();
+
+    std::call_once(ze_lib::context->initOnce, [&result, flags]() {
+        result = ze_lib::context->Init(flags);
     });
 
     if( ZE_RESULT_SUCCESS != result )
@@ -83,7 +83,7 @@ ze_result_t ZE_APICALL zeDeinit()
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Retrieves driver instances
-/// 
+///
 /// @details
 ///     - A driver represents a collection of physical devices.
 ///     - Multiple calls to this function will return identical driver handles,
@@ -92,11 +92,11 @@ ze_result_t ZE_APICALL zeDeinit()
 ///       number of drivers.
 ///     - The application may call this function from simultaneous threads.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @remarks
 ///   _Analogues_
 ///     - clGetPlatformIDs
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -124,11 +124,11 @@ zeDriverGet(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Returns the API version supported by the specified driver
-/// 
+///
 /// @details
 ///     - The application may call this function from simultaneous threads.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -152,15 +152,15 @@ zeDriverGetApiVersion(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Retrieves properties of the driver.
-/// 
+///
 /// @details
 ///     - The application may call this function from simultaneous threads.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @remarks
 ///   _Analogues_
 ///     - **clGetPlatformInfo**
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -184,11 +184,11 @@ zeDriverGetProperties(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Retrieves IPC attributes of the driver
-/// 
+///
 /// @details
 ///     - The application may call this function from simultaneous threads.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -212,15 +212,15 @@ zeDriverGetIpcProperties(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Retrieves extension properties
-/// 
+///
 /// @details
 ///     - The application may call this function from simultaneous threads.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @remarks
 ///   _Analogues_
 ///     - **vkEnumerateInstanceExtensionProperties**
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -254,11 +254,11 @@ zeDriverGetExtensionProperties(
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Retrieves function pointer for vendor-specific or experimental
 ///        extensions
-/// 
+///
 /// @details
 ///     - The application may call this function from simultaneous threads.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -284,7 +284,7 @@ zeDriverGetExtensionFunctionAddress(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Retrieves devices within a driver
-/// 
+///
 /// @details
 ///     - Multiple calls to this function will return identical device handles,
 ///       in the same order.
@@ -293,7 +293,7 @@ zeDriverGetExtensionFunctionAddress(
 ///       environment variables.
 ///     - The application may call this function from simultaneous threads.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -324,7 +324,7 @@ zeDeviceGet(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Retrieves a sub-device from a device
-/// 
+///
 /// @details
 ///     - Multiple calls to this function will return identical device handles,
 ///       in the same order.
@@ -332,11 +332,11 @@ zeDeviceGet(
 ///       ::ZE_AFFINITY_MASK environment variable.
 ///     - The application may call this function from simultaneous threads.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @remarks
 ///   _Analogues_
 ///     - clCreateSubDevices
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -367,15 +367,15 @@ zeDeviceGetSubDevices(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Retrieves properties of the device.
-/// 
+///
 /// @details
 ///     - The application may call this function from simultaneous threads.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @remarks
 ///   _Analogues_
 ///     - clGetDeviceInfo
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -399,15 +399,15 @@ zeDeviceGetProperties(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Retrieves compute properties of the device.
-/// 
+///
 /// @details
 ///     - The application may call this function from simultaneous threads.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @remarks
 ///   _Analogues_
 ///     - clGetDeviceInfo
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -431,11 +431,11 @@ zeDeviceGetComputeProperties(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Retrieves module properties of the device
-/// 
+///
 /// @details
 ///     - The application may call this function from simultaneous threads.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -459,7 +459,7 @@ zeDeviceGetModuleProperties(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Retrieves command queue group properties of the device.
-/// 
+///
 /// @details
 ///     - Properties are reported for each physical command queue type supported
 ///       by the device.
@@ -469,11 +469,11 @@ zeDeviceGetModuleProperties(
 ///       queue group's ordinal.
 ///     - The application may call this function from simultaneous threads.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @remarks
 ///   _Analogues_
 ///     - **vkGetPhysicalDeviceQueueFamilyProperties**
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -507,7 +507,7 @@ zeDeviceGetCommandQueueGroupProperties(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Retrieves local memory properties of the device.
-/// 
+///
 /// @details
 ///     - Properties are reported for each physical memory type supported by the
 ///       device.
@@ -517,11 +517,11 @@ zeDeviceGetCommandQueueGroupProperties(
 ///       local memory ordinal.
 ///     - The application may call this function from simultaneous threads.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @remarks
 ///   _Analogues_
 ///     - clGetDeviceInfo
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -554,15 +554,15 @@ zeDeviceGetMemoryProperties(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Retrieves memory access properties of the device.
-/// 
+///
 /// @details
 ///     - The application may call this function from simultaneous threads.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @remarks
 ///   _Analogues_
 ///     - clGetDeviceInfo
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -586,15 +586,15 @@ zeDeviceGetMemoryAccessProperties(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Retrieves cache properties of the device
-/// 
+///
 /// @details
 ///     - The application may call this function from simultaneous threads.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @remarks
 ///   _Analogues_
 ///     - clGetDeviceInfo
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -626,12 +626,12 @@ zeDeviceGetCacheProperties(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Retrieves image properties of the device
-/// 
+///
 /// @details
 ///     - See ::zeImageGetProperties for format-specific capabilities.
 ///     - The application may call this function from simultaneous threads.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -655,11 +655,11 @@ zeDeviceGetImageProperties(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Retrieves external memory import and export of the device
-/// 
+///
 /// @details
 ///     - The application may call this function from simultaneous threads.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -684,11 +684,11 @@ zeDeviceGetExternalMemoryProperties(
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Retrieves peer-to-peer properties between one device and a peer
 ///        devices
-/// 
+///
 /// @details
 ///     - The application may call this function from simultaneous threads.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -714,7 +714,7 @@ zeDeviceGetP2PProperties(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Queries if one device can directly access peer device allocations
-/// 
+///
 /// @details
 ///     - Any device can access any other device within a node through a
 ///       scale-up fabric.
@@ -732,7 +732,7 @@ zeDeviceGetP2PProperties(
 ///           (same root complex or shared PCIe switch) then true.
 ///     - The application may call this function from simultaneous threads.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -758,14 +758,14 @@ zeDeviceCanAccessPeer(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Returns current status of the device.
-/// 
+///
 /// @details
 ///     - Once a device is reset, this call will update the OS handle attached
 ///       to the device handle.
 ///     - The application may call this function from simultaneous threads with
 ///       the same device handle.
 ///     - The implementation of this function must be thread-safe.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -790,12 +790,12 @@ zeDeviceGetStatus(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Returns synchronized Host and device global timestamps.
-/// 
+///
 /// @details
 ///     - The application may call this function from simultaneous threads with
 ///       the same device handle.
 ///     - The implementation of this function must be thread-safe.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -823,13 +823,13 @@ zeDeviceGetGlobalTimestamps(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Creates a context for the driver.
-/// 
+///
 /// @details
 ///     - The application must only use the context for the driver which was
 ///       provided during creation.
 ///     - The application may call this function from simultaneous threads.
 ///     - The implementation of this function must be thread-safe.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -859,13 +859,13 @@ zeContextCreate(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Creates a context for the driver.
-/// 
+///
 /// @details
 ///     - The application must only use the context for the driver which was
 ///       provided during creation.
 ///     - The application may call this function from simultaneous threads.
 ///     - The implementation of this function must be thread-safe.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -904,7 +904,7 @@ zeContextCreateEx(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Destroys a context.
-/// 
+///
 /// @details
 ///     - The application must ensure the device is not currently referencing
 ///       the context before it is deleted.
@@ -913,7 +913,7 @@ zeContextCreateEx(
 ///     - The application must **not** call this function from simultaneous
 ///       threads with the same context handle.
 ///     - The implementation of this function must be thread-safe.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -935,12 +935,12 @@ zeContextDestroy(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Returns current status of the context.
-/// 
+///
 /// @details
 ///     - The application may call this function from simultaneous threads with
 ///       the same context handle.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -965,7 +965,7 @@ zeContextGetStatus(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Creates a command queue on the context.
-/// 
+///
 /// @details
 ///     - A command queue represents a logical input stream to the device, tied
 ///       to a physical input stream.
@@ -973,11 +973,11 @@ zeContextGetStatus(
 ///       sub-devices, which was provided during creation.
 ///     - The application may call this function from simultaneous threads.
 ///     - The implementation of this function must be thread-safe.
-/// 
+///
 /// @remarks
 ///   _Analogues_
 ///     - **clCreateCommandQueue**
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -1011,7 +1011,7 @@ zeCommandQueueCreate(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Destroys a command queue.
-/// 
+///
 /// @details
 ///     - The application must destroy all fence handles created from the
 ///       command queue before destroying the command queue itself
@@ -1022,11 +1022,11 @@ zeCommandQueueCreate(
 ///     - The application must **not** call this function from simultaneous
 ///       threads with the same command queue handle.
 ///     - The implementation of this function must be thread-safe.
-/// 
+///
 /// @remarks
 ///   _Analogues_
 ///     - **clReleaseCommandQueue**
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -1048,7 +1048,7 @@ zeCommandQueueDestroy(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Executes a command list in a command queue.
-/// 
+///
 /// @details
 ///     - The command lists are submitted to the device in the order they are
 ///       received, whether from multiple calls (on the same or different
@@ -1065,11 +1065,11 @@ zeCommandQueueDestroy(
 ///       were created on the same context.
 ///     - The application may call this function from simultaneous threads.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @remarks
 ///   _Analogues_
 ///     - vkQueueSubmit
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -1100,11 +1100,11 @@ zeCommandQueueExecuteCommandLists(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Synchronizes a command queue by waiting on the host.
-/// 
+///
 /// @details
 ///     - The application may call this function from simultaneous threads.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -1134,7 +1134,7 @@ zeCommandQueueSynchronize(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Creates a command list on the context.
-/// 
+///
 /// @details
 ///     - A command list represents a sequence of commands for execution on a
 ///       command queue.
@@ -1143,7 +1143,7 @@ zeCommandQueueSynchronize(
 ///       sub-devices, which was provided during creation.
 ///     - The application may call this function from simultaneous threads.
 ///     - The implementation of this function must be thread-safe.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -1175,7 +1175,7 @@ zeCommandListCreate(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Creates an immediate command list on the context.
-/// 
+///
 /// @details
 ///     - An immediate command list is used for low-latency submission of
 ///       commands.
@@ -1186,7 +1186,7 @@ zeCommandListCreate(
 ///       sub-devices, which was provided during creation.
 ///     - The application may call this function from simultaneous threads.
 ///     - The implementation of this function must be thread-safe.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -1220,7 +1220,7 @@ zeCommandListCreateImmediate(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Destroys a command list.
-/// 
+///
 /// @details
 ///     - The application must ensure the device is not currently referencing
 ///       the command list before it is deleted.
@@ -1229,7 +1229,7 @@ zeCommandListCreateImmediate(
 ///     - The application must **not** call this function from simultaneous
 ///       threads with the same command list handle.
 ///     - The implementation of this function must be thread-safe.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -1251,12 +1251,12 @@ zeCommandListDestroy(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Closes a command list; ready to be executed by a command queue.
-/// 
+///
 /// @details
 ///     - The application must **not** call this function from simultaneous
 ///       threads with the same command list handle.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -1278,14 +1278,14 @@ zeCommandListClose(
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Reset a command list to initial (empty) state; ready for appending
 ///        commands.
-/// 
+///
 /// @details
 ///     - The application must ensure the device is not currently referencing
 ///       the command list before it is reset
 ///     - The application must **not** call this function from simultaneous
 ///       threads with the same command list handle.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -1307,7 +1307,7 @@ zeCommandListReset(
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Appends a memory write of the device's global timestamp value into a
 ///        command list.
-/// 
+///
 /// @details
 ///     - The application must ensure the events are accessible by the device on
 ///       which the command list was created.
@@ -1322,7 +1322,7 @@ zeCommandListReset(
 ///     - The application must **not** call this function from simultaneous
 ///       threads with the same command list handle.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -1355,7 +1355,7 @@ zeCommandListAppendWriteGlobalTimestamp(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Appends an execution and global memory barrier into a command list.
-/// 
+///
 /// @details
 ///     - The application must ensure the events are accessible by the device on
 ///       which the command list was created.
@@ -1368,12 +1368,12 @@ zeCommandListAppendWriteGlobalTimestamp(
 ///     - The application must **not** call this function from simultaneous
 ///       threads with the same command list handle.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @remarks
 ///   _Analogues_
 ///     - **vkCmdPipelineBarrier**
 ///     - clEnqueueBarrierWithWaitList
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -1402,7 +1402,7 @@ zeCommandListAppendBarrier(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Appends a global memory ranges barrier into a command list.
-/// 
+///
 /// @details
 ///     - The application must ensure the events are accessible by the device on
 ///       which the command list was created.
@@ -1415,7 +1415,7 @@ zeCommandListAppendBarrier(
 ///     - The application must **not** call this function from simultaneous
 ///       threads with the same command list handle.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -1450,17 +1450,17 @@ zeCommandListAppendMemoryRangesBarrier(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Ensures in-bound writes to the device are globally observable.
-/// 
+///
 /// @details
 ///     - This is a special-case system level barrier that can be used to ensure
-///       global observability of writes; 
+///       global observability of writes;
 ///       typically needed after a producer (e.g., NIC) performs direct writes
 ///       to the device's memory (e.g., Direct RDMA writes).
 ///       This is typically required when the memory corresponding to the writes
 ///       is subsequently accessed from a remote device.
 ///     - The application may call this function from simultaneous threads.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -1483,7 +1483,7 @@ zeContextSystemBarrier(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Copies host, device, or shared memory.
-/// 
+///
 /// @details
 ///     - The application must ensure the memory pointed to by dstptr and srcptr
 ///       is accessible by the device on which the command list was created.
@@ -1497,14 +1497,14 @@ zeContextSystemBarrier(
 ///     - The application must **not** call this function from simultaneous
 ///       threads with the same command list handle.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @remarks
 ///   _Analogues_
 ///     - **clEnqueueCopyBuffer**
 ///     - **clEnqueueReadBuffer**
 ///     - **clEnqueueWriteBuffer**
 ///     - **clEnqueueSVMMemcpy**
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -1539,7 +1539,7 @@ zeCommandListAppendMemoryCopy(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Initializes host, device, or shared memory.
-/// 
+///
 /// @details
 ///     - The application must ensure the memory pointed to by dstptr is
 ///       accessible by the device on which the command list was created.
@@ -1557,12 +1557,12 @@ zeCommandListAppendMemoryCopy(
 ///     - The application must **not** call this function from simultaneous
 ///       threads with the same command list handle.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @remarks
 ///   _Analogues_
 ///     - **clEnqueueFillBuffer**
 ///     - **clEnqueueSVMMemFill**
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -1599,7 +1599,7 @@ zeCommandListAppendMemoryFill(
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Copies a region from a 2D or 3D array of host, device, or shared
 ///        memory.
-/// 
+///
 /// @details
 ///     - The application must ensure the memory pointed to by dstptr and srcptr
 ///       is accessible by the device on which the command list was created.
@@ -1616,7 +1616,7 @@ zeCommandListAppendMemoryFill(
 ///     - The application must **not** call this function from simultaneous
 ///       threads with the same command list handle.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -1663,7 +1663,7 @@ zeCommandListAppendMemoryCopyRegion(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Copies host, device, or shared memory from another context.
-/// 
+///
 /// @details
 ///     - The current active and source context must be from the same driver.
 ///     - The application must ensure the memory pointed to by dstptr and srcptr
@@ -1678,7 +1678,7 @@ zeCommandListAppendMemoryCopyRegion(
 ///     - The application must **not** call this function from simultaneous
 ///       threads with the same command list handle.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -1715,7 +1715,7 @@ zeCommandListAppendMemoryCopyFromContext(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Copies an image.
-/// 
+///
 /// @details
 ///     - The application must ensure the image and events are accessible by the
 ///       device on which the command list was created.
@@ -1726,11 +1726,11 @@ zeCommandListAppendMemoryCopyFromContext(
 ///     - The application must **not** call this function from simultaneous
 ///       threads with the same command list handle.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @remarks
 ///   _Analogues_
 ///     - **clEnqueueCopyImage**
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -1763,7 +1763,7 @@ zeCommandListAppendImageCopy(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Copies a region of an image to another image.
-/// 
+///
 /// @details
 ///     - The application must ensure the image and events are accessible by the
 ///       device on which the command list was created.
@@ -1777,7 +1777,7 @@ zeCommandListAppendImageCopy(
 ///     - The application must **not** call this function from simultaneous
 ///       threads with the same command list handle.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -1813,7 +1813,7 @@ zeCommandListAppendImageCopyRegion(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Copies from an image to device or shared memory.
-/// 
+///
 /// @details
 ///     - The application must ensure the memory pointed to by dstptr is
 ///       accessible by the device on which the command list was created.
@@ -1829,11 +1829,11 @@ zeCommandListAppendImageCopyRegion(
 ///     - The application must **not** call this function from simultaneous
 ///       threads with the same command list handle.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @remarks
 ///   _Analogues_
 ///     - clEnqueueReadImage
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -1868,7 +1868,7 @@ zeCommandListAppendImageCopyToMemory(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Copies to an image from device or shared memory.
-/// 
+///
 /// @details
 ///     - The application must ensure the memory pointed to by srcptr is
 ///       accessible by the device on which the command list was created.
@@ -1884,11 +1884,11 @@ zeCommandListAppendImageCopyToMemory(
 ///     - The application must **not** call this function from simultaneous
 ///       threads with the same command list handle.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @remarks
 ///   _Analogues_
 ///     - clEnqueueWriteImage
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -1924,7 +1924,7 @@ zeCommandListAppendImageCopyFromMemory(
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Asynchronously prefetches shared memory to the device associated with
 ///        the specified command list
-/// 
+///
 /// @details
 ///     - This is a hint to improve performance only and is not required for
 ///       correctness.
@@ -1945,11 +1945,11 @@ zeCommandListAppendImageCopyFromMemory(
 ///     - The application must **not** call this function from simultaneous
 ///       threads with the same command list handle.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @remarks
 ///   _Analogues_
 ///     - clEnqueueSVMMigrateMem
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -1974,7 +1974,7 @@ zeCommandListAppendMemoryPrefetch(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Provides advice about the use of a shared memory range
-/// 
+///
 /// @details
 ///     - Memory advice is a performance hint only and is not required for
 ///       functional correctness.
@@ -1995,7 +1995,7 @@ zeCommandListAppendMemoryPrefetch(
 ///       threads with the same command list handle, and the memory was
 ///       allocated.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -2025,13 +2025,13 @@ zeCommandListAppendMemAdvise(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Creates a pool of events on the context.
-/// 
+///
 /// @details
 ///     - The application must only use events within the pool for the
 ///       device(s), or their sub-devices, which were provided during creation.
 ///     - The application may call this function from simultaneous threads.
 ///     - The implementation of this function must be thread-safe.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -2070,7 +2070,7 @@ zeEventPoolCreate(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Deletes an event pool object.
-/// 
+///
 /// @details
 ///     - The application must destroy all event handles created from the pool
 ///       before destroying the pool itself.
@@ -2081,7 +2081,7 @@ zeEventPoolCreate(
 ///     - The application must **not** call this function from simultaneous
 ///       threads with the same event pool handle.
 ///     - The implementation of this function must be thread-safe.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -2103,7 +2103,7 @@ zeEventPoolDestroy(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Creates an event from the pool.
-/// 
+///
 /// @details
 ///     - An event is used to communicate fine-grain host-to-device,
 ///       device-to-host or device-to-device dependencies have completed.
@@ -2112,12 +2112,12 @@ zeEventPoolDestroy(
 ///     - The application must **not** call this function from simultaneous
 ///       threads with the same event pool handle.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @remarks
 ///   _Analogues_
 ///     - **clCreateUserEvent**
 ///     - vkCreateEvent
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -2147,7 +2147,7 @@ zeEventCreate(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Deletes an event object.
-/// 
+///
 /// @details
 ///     - The application must ensure the device is not currently referencing
 ///       the event before it is deleted.
@@ -2156,12 +2156,12 @@ zeEventCreate(
 ///     - The application must **not** call this function from simultaneous
 ///       threads with the same event handle.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @remarks
 ///   _Analogues_
 ///     - **clReleaseEvent**
 ///     - vkDestroyEvent
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -2184,11 +2184,11 @@ zeEventDestroy(
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Gets an IPC event pool handle for the specified event handle that can
 ///        be shared with another process.
-/// 
+///
 /// @details
 ///     - Event pool must have been created with ::ZE_EVENT_POOL_FLAG_IPC.
 ///     - The application may call this function from simultaneous threads.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -2214,14 +2214,14 @@ zeEventPoolGetIpcHandle(
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Opens an IPC event pool handle to retrieve an event pool handle from
 ///        another process.
-/// 
+///
 /// @details
 ///     - Multiple calls to this function with the same IPC handle will return
 ///       unique event pool handles.
 ///     - The event handle in this process should not be freed with
 ///       ::zeEventPoolDestroy, but rather with ::zeEventPoolCloseIpcHandle.
 ///     - The application may call this function from simultaneous threads.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -2247,13 +2247,13 @@ zeEventPoolOpenIpcHandle(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Closes an IPC event handle in the current process.
-/// 
+///
 /// @details
 ///     - Closes an IPC event handle by destroying events that were opened in
 ///       this process using ::zeEventPoolOpenIpcHandle.
 ///     - The application must **not** call this function from simultaneous
 ///       threads with the same event pool handle.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -2274,7 +2274,7 @@ zeEventPoolCloseIpcHandle(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Appends a signal of the event from the device into a command list.
-/// 
+///
 /// @details
 ///     - The application must ensure the events are accessible by the device on
 ///       which the command list was created.
@@ -2287,12 +2287,12 @@ zeEventPoolCloseIpcHandle(
 ///     - The application must **not** call this function from simultaneous
 ///       threads with the same command list handle.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @remarks
 ///   _Analogues_
 ///     - **clSetUserEventStatus**
 ///     - vkCmdSetEvent
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -2316,7 +2316,7 @@ zeCommandListAppendSignalEvent(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Appends wait on event(s) on the device into a command list.
-/// 
+///
 /// @details
 ///     - The application must ensure the events are accessible by the device on
 ///       which the command list was created.
@@ -2325,7 +2325,7 @@ zeCommandListAppendSignalEvent(
 ///     - The application must **not** call this function from simultaneous
 ///       threads with the same command list handle.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -2352,7 +2352,7 @@ zeCommandListAppendWaitOnEvents(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Signals a event from host.
-/// 
+///
 /// @details
 ///     - The duration of an event created from an event pool that was created
 ///       using ::ZE_EVENT_POOL_FLAG_KERNEL_TIMESTAMP flag is undefined.
@@ -2360,11 +2360,11 @@ zeCommandListAppendWaitOnEvents(
 ///       correctly as signaled when used by other event API functionality.
 ///     - The application may call this function from simultaneous threads.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @remarks
 ///   _Analogues_
 ///     - clSetUserEventStatus
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -2386,15 +2386,15 @@ zeEventHostSignal(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief The current host thread waits on an event to be signaled.
-/// 
+///
 /// @details
 ///     - The application may call this function from simultaneous threads.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @remarks
 ///   _Analogues_
 ///     - clWaitForEvents
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -2425,16 +2425,16 @@ zeEventHostSynchronize(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Queries an event object's status on the host.
-/// 
+///
 /// @details
 ///     - The application may call this function from simultaneous threads.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @remarks
 ///   _Analogues_
 ///     - **clGetEventInfo**
 ///     - vkGetEventStatus
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -2459,7 +2459,7 @@ zeEventQueryStatus(
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Appends a reset of an event back to not signaled state into a command
 ///        list.
-/// 
+///
 /// @details
 ///     - The application must ensure the events are accessible by the device on
 ///       which the command list was created.
@@ -2468,11 +2468,11 @@ zeEventQueryStatus(
 ///     - The application must **not** call this function from simultaneous
 ///       threads with the same command list handle.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @remarks
 ///   _Analogues_
 ///     - vkResetEvent
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -2496,15 +2496,15 @@ zeCommandListAppendEventReset(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief The current host thread resets an event back to not signaled state.
-/// 
+///
 /// @details
 ///     - The application may call this function from simultaneous threads.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @remarks
 ///   _Analogues_
 ///     - vkResetEvent
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -2526,7 +2526,7 @@ zeEventHostReset(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Queries an event's timestamp value on the host.
-/// 
+///
 /// @details
 ///     - The application must ensure the event was created from an event pool
 ///       that was created using ::ZE_EVENT_POOL_FLAG_KERNEL_TIMESTAMP flag.
@@ -2534,7 +2534,7 @@ zeEventHostReset(
 ///       signaled.
 ///     - The application may call this function from simultaneous threads.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -2561,7 +2561,7 @@ zeEventQueryKernelTimestamp(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Appends a query of an events' timestamp value(s) into a command list.
-/// 
+///
 /// @details
 ///     - The application must ensure the events are accessible by the device on
 ///       which the command list was created.
@@ -2579,7 +2579,7 @@ zeEventQueryKernelTimestamp(
 ///     - The application must **not** call this function from simultaneous
 ///       threads with the same command list handle.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -2618,7 +2618,7 @@ zeCommandListAppendQueryKernelTimestamps(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Creates a fence for the command queue.
-/// 
+///
 /// @details
 ///     - A fence is a heavyweight synchronization primitive used to communicate
 ///       to the host that command list execution has completed.
@@ -2626,11 +2626,11 @@ zeCommandListAppendQueryKernelTimestamps(
 ///       was provided during creation.
 ///     - The application may call this function from simultaneous threads.
 ///     - The implementation of this function must be thread-safe.
-/// 
+///
 /// @remarks
 ///   _Analogues_
 ///     - **vkCreateFence**
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -2660,7 +2660,7 @@ zeFenceCreate(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Deletes a fence object.
-/// 
+///
 /// @details
 ///     - The application must ensure the device is not currently referencing
 ///       the fence before it is deleted.
@@ -2669,11 +2669,11 @@ zeFenceCreate(
 ///     - The application must **not** call this function from simultaneous
 ///       threads with the same fence handle.
 ///     - The implementation of this function must be thread-safe.
-/// 
+///
 /// @remarks
 ///   _Analogues_
 ///     - **vkDestroyFence**
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -2695,15 +2695,15 @@ zeFenceDestroy(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief The current host thread waits on a fence to be signaled.
-/// 
+///
 /// @details
 ///     - The application may call this function from simultaneous threads.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @remarks
 ///   _Analogues_
 ///     - **vkWaitForFences**
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -2734,15 +2734,15 @@ zeFenceHostSynchronize(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Queries a fence object's status.
-/// 
+///
 /// @details
 ///     - The application may call this function from simultaneous threads.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @remarks
 ///   _Analogues_
 ///     - **vkGetFenceStatus**
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -2766,15 +2766,15 @@ zeFenceQueryStatus(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Reset a fence back to the not signaled state.
-/// 
+///
 /// @details
 ///     - The application may call this function from simultaneous threads.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @remarks
 ///   _Analogues_
 ///     - **vkResetFences**
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -2795,11 +2795,11 @@ zeFenceReset(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Retrieves supported properties of an image.
-/// 
+///
 /// @details
 ///     - The application may call this function from simultaneous threads.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -2828,17 +2828,17 @@ zeImageGetProperties(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Creates an image on the context.
-/// 
+///
 /// @details
 ///     - The application must only use the image for the device, or its
 ///       sub-devices, which was provided during creation.
 ///     - The application may call this function from simultaneous threads.
 ///     - The implementation of this function must be thread-safe.
-/// 
+///
 /// @remarks
 ///   _Analogues_
 ///     - clCreateImage
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -2872,7 +2872,7 @@ zeImageCreate(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Deletes an image object.
-/// 
+///
 /// @details
 ///     - The application must ensure the device is not currently referencing
 ///       the image before it is deleted.
@@ -2881,7 +2881,7 @@ zeImageCreate(
 ///     - The application must **not** call this function from simultaneous
 ///       threads with the same image handle.
 ///     - The implementation of this function must be thread-safe.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -2903,7 +2903,7 @@ zeImageDestroy(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Allocates shared memory on the context.
-/// 
+///
 /// @details
 ///     - Shared allocations share ownership between the host and one or more
 ///       devices.
@@ -2922,7 +2922,7 @@ zeImageDestroy(
 ///       and device, or its sub-devices, which was provided during allocation.
 ///     - The application may call this function from simultaneous threads.
 ///     - The implementation of this function must be thread-safe.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -2965,7 +2965,7 @@ zeMemAllocShared(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Allocates device memory on the context.
-/// 
+///
 /// @details
 ///     - Device allocations are owned by a specific device.
 ///     - In general, a device allocation may only be accessed by the device
@@ -2974,7 +2974,7 @@ zeMemAllocShared(
 ///       and device, or its sub-devices, which was provided during allocation.
 ///     - The application may call this function from simultaneous threads.
 ///     - The implementation of this function must be thread-safe.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -3015,7 +3015,7 @@ zeMemAllocDevice(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Allocates host memory on the context.
-/// 
+///
 /// @details
 ///     - Host allocations are owned by the host process.
 ///     - Host allocations are accessible by the host and all devices within the
@@ -3026,7 +3026,7 @@ zeMemAllocDevice(
 ///       which was provided during allocation.
 ///     - The application may call this function from simultaneous threads.
 ///     - The implementation of this function must be thread-safe.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -3066,7 +3066,7 @@ zeMemAllocHost(
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Frees allocated host memory, device memory, or shared memory on the
 ///        context.
-/// 
+///
 /// @details
 ///     - The application must ensure the device is not currently referencing
 ///       the memory before it is freed
@@ -3075,7 +3075,7 @@ zeMemAllocHost(
 ///     - The application must **not** call this function from simultaneous
 ///       threads with the same pointer.
 ///     - The implementation of this function must be thread-safe.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -3099,7 +3099,7 @@ zeMemFree(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Retrieves attributes of a memory allocation
-/// 
+///
 /// @details
 ///     - The application may call this function from simultaneous threads.
 ///     - The application may query attributes of a memory allocation unrelated
@@ -3107,7 +3107,7 @@ zeMemFree(
 ///       When this occurs, the returned allocation type will be
 ///       ::ZE_MEMORY_TYPE_UNKNOWN, and the returned identifier and associated
 ///       device is unspecified.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -3134,10 +3134,10 @@ zeMemGetAllocProperties(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Retrieves the base address and/or size of an allocation
-/// 
+///
 /// @details
 ///     - The application may call this function from simultaneous threads.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -3163,7 +3163,7 @@ zeMemGetAddressRange(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Creates an IPC memory handle for the specified allocation
-/// 
+///
 /// @details
 ///     - Takes a pointer to a device memory allocation and creates an IPC
 ///       memory handle for exporting it for use in another process.
@@ -3171,7 +3171,7 @@ zeMemGetAddressRange(
 ///       the value returned from ::zeMemAllocDevice.
 ///     - The application may call this function from simultaneous threads.
 ///     - The implementation of this function must be thread-safe.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -3198,7 +3198,7 @@ zeMemGetIpcHandle(
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Opens an IPC memory handle to retrieve a device pointer on the
 ///        context.
-/// 
+///
 /// @details
 ///     - Takes an IPC memory handle from a remote process and associates it
 ///       with a device pointer usable in this process.
@@ -3208,7 +3208,7 @@ zeMemGetIpcHandle(
 ///       unique pointers.
 ///     - The application may call this function from simultaneous threads.
 ///     - The implementation of this function must be thread-safe.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -3239,14 +3239,14 @@ zeMemOpenIpcHandle(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Closes an IPC memory handle
-/// 
+///
 /// @details
 ///     - Closes an IPC memory handle by unmapping memory that was opened in
 ///       this process using ::zeMemOpenIpcHandle.
 ///     - The application must **not** call this function from simultaneous
 ///       threads with the same pointer.
 ///     - The implementation of this function must be thread-safe.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -3270,7 +3270,7 @@ zeMemCloseIpcHandle(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Creates a module on the context.
-/// 
+///
 /// @details
 ///     - Compiles the module for execution on the device.
 ///     - The application must only use the module for the device, or its
@@ -3283,7 +3283,7 @@ zeMemCloseIpcHandle(
 ///       specialization constants.
 ///     - The application may call this function from simultaneous threads.
 ///     - The implementation of this function must be thread-safe.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -3321,7 +3321,7 @@ zeModuleCreate(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Destroys module
-/// 
+///
 /// @details
 ///     - The application must destroy all kernel and build log handles created
 ///       from the module before destroying the module itself.
@@ -3332,7 +3332,7 @@ zeModuleCreate(
 ///     - The application must **not** call this function from simultaneous
 ///       threads with the same module handle.
 ///     - The implementation of this function must be thread-safe.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -3355,7 +3355,7 @@ zeModuleDestroy(
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Dynamically link modules together that share import/export linkage
 ///        dependencies.
-/// 
+///
 /// @details
 ///     - Modules support import and export linkage for functions and global
 ///       variables.
@@ -3384,7 +3384,7 @@ zeModuleDestroy(
 ///     - The application may call this function from simultaneous threads as
 ///       long as the import modules being linked are not the same.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -3409,7 +3409,7 @@ zeModuleDynamicLink(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Destroys module build log object
-/// 
+///
 /// @details
 ///     - The implementation of this function may immediately free all Host
 ///       allocations associated with this object.
@@ -3418,7 +3418,7 @@ zeModuleDynamicLink(
 ///     - The implementation of this function should be lock-free.
 ///     - This function can be called before or after ::zeModuleDestroy for the
 ///       associated module.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -3440,13 +3440,13 @@ zeModuleBuildLogDestroy(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Retrieves text string for build log.
-/// 
+///
 /// @details
 ///     - The caller can pass nullptr for pBuildLog when querying only for size.
 ///     - The caller must provide memory for build log.
 ///     - The application may call this function from simultaneous threads.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -3471,7 +3471,7 @@ zeModuleBuildLogGetString(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Retrieve native binary from Module.
-/// 
+///
 /// @details
 ///     - The native binary output can be cached to disk and new modules can be
 ///       later constructed from the cached copy.
@@ -3483,7 +3483,7 @@ zeModuleBuildLogGetString(
 ///       by the caller.
 ///     - The application may call this function from simultaneous threads.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -3508,7 +3508,7 @@ zeModuleGetNativeBinary(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Retrieve global variable pointer from Module.
-/// 
+///
 /// @details
 ///     - The application may query global pointer from any module that either
 ///       exports or imports it.
@@ -3516,7 +3516,7 @@ zeModuleGetNativeBinary(
 ///       before the global pointer can be queried from it.
 ///     - The application may call this function from simultaneous threads.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -3543,11 +3543,11 @@ zeModuleGetGlobalPointer(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Retrieve all kernel names in the module.
-/// 
+///
 /// @details
 ///     - The application may call this function from simultaneous threads.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -3578,11 +3578,11 @@ zeModuleGetKernelNames(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Retrieve module properties.
-/// 
+///
 /// @details
 ///     - The application may call this function from simultaneous threads.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -3606,13 +3606,13 @@ zeModuleGetProperties(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Create a kernel from the module.
-/// 
+///
 /// @details
 ///     - Modules that have unresolved imports need to be dynamically linked
 ///       before a kernel can be created from them. (See ::zeModuleDynamicLink)
 ///     - The application may call this function from simultaneous threads.
 ///     - The implementation of this function must be thread-safe.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -3643,7 +3643,7 @@ zeKernelCreate(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Destroys a kernel object
-/// 
+///
 /// @details
 ///     - The application must ensure the device is not currently referencing
 ///       the kernel before it is deleted.
@@ -3652,7 +3652,7 @@ zeKernelCreate(
 ///     - The application must **not** call this function from simultaneous
 ///       threads with the same kernel handle.
 ///     - The implementation of this function must be thread-safe.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -3674,14 +3674,14 @@ zeKernelDestroy(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Retrieve a function pointer from a module by name
-/// 
+///
 /// @details
 ///     - The function pointer is unique for the device on which the module was
 ///       created.
 ///     - The function pointer is no longer valid if module is destroyed.
 ///     - The application may call this function from simultaneous threads.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -3708,14 +3708,14 @@ zeModuleGetFunctionPointer(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Set group size for a kernel.
-/// 
+///
 /// @details
 ///     - The group size will be used when a ::zeCommandListAppendLaunchKernel
 ///       variant is called.
 ///     - The application must **not** call this function from simultaneous
 ///       threads with the same kernel handle.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -3741,13 +3741,13 @@ zeKernelSetGroupSize(
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Query a suggested group size for a kernel given a global size for each
 ///        dimension.
-/// 
+///
 /// @details
 ///     - This function ignores the group size that is set using
 ///       ::zeKernelSetGroupSize.
 ///     - The application may call this function from simultaneous threads.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -3779,11 +3779,11 @@ zeKernelSuggestGroupSize(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Query a suggested max group count for a cooperative kernel.
-/// 
+///
 /// @details
 ///     - The application may call this function from simultaneous threads.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -3807,14 +3807,14 @@ zeKernelSuggestMaxCooperativeGroupCount(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Set kernel argument for a kernel.
-/// 
+///
 /// @details
 ///     - The argument values will be used when a
 ///       ::zeCommandListAppendLaunchKernel variant is called.
 ///     - The application must **not** call this function from simultaneous
 ///       threads with the same kernel handle.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -3841,7 +3841,7 @@ zeKernelSetArgumentValue(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Sets kernel indirect access flags.
-/// 
+///
 /// @details
 ///     - The application should specify which allocations will be indirectly
 ///       accessed by the kernel to allow driver to optimize which allocations
@@ -3849,7 +3849,7 @@ zeKernelSetArgumentValue(
 ///     - This function may **not** be called from simultaneous threads with the
 ///       same Kernel handle.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -3873,12 +3873,12 @@ zeKernelSetIndirectAccess(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Retrieve kernel indirect access flags.
-/// 
+///
 /// @details
 ///     - This function may be called from simultaneous threads with the same
 ///       Kernel handle.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -3903,12 +3903,12 @@ zeKernelGetIndirectAccess(
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Retrieve all declared kernel attributes (i.e. can be specified with
 ///        __attribute__ in runtime language).
-/// 
+///
 /// @details
 ///     - This function may be called from simultaneous threads with the same
 ///       Kernel handle.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -3936,14 +3936,14 @@ zeKernelGetSourceAttributes(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Sets the preferred cache configuration.
-/// 
+///
 /// @details
 ///     - The cache configuration will be used when a
 ///       ::zeCommandListAppendLaunchKernel variant is called.
 ///     - The application must **not** call this function from simultaneous
 ///       threads with the same kernel handle.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -3956,7 +3956,7 @@ zeKernelGetSourceAttributes(
 ze_result_t ZE_APICALL
 zeKernelSetCacheConfig(
     ze_kernel_handle_t hKernel,                     ///< [in] handle of the kernel object
-    ze_cache_config_flags_t flags                   ///< [in] cache configuration. 
+    ze_cache_config_flags_t flags                   ///< [in] cache configuration.
                                                     ///< must be 0 (default configuration) or a valid combination of ::ze_cache_config_flag_t.
     )
 {
@@ -3969,11 +3969,11 @@ zeKernelSetCacheConfig(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Retrieve kernel properties.
-/// 
+///
 /// @details
 ///     - The application may call this function from simultaneous threads.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -3997,14 +3997,14 @@ zeKernelGetProperties(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Retrieve kernel name from Kernel.
-/// 
+///
 /// @details
 ///     - The caller can pass nullptr for pName when querying only for size.
 ///     - The implementation will copy the kernel name into a buffer supplied by
 ///       the caller.
 ///     - The application may call this function from simultaneous threads.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -4030,7 +4030,7 @@ zeKernelGetName(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Launch kernel over one or more work groups.
-/// 
+///
 /// @details
 ///     - The application must ensure the kernel and events are accessible by
 ///       the device on which the command list was created.
@@ -4041,7 +4041,7 @@ zeKernelGetName(
 ///     - This function may **not** be called from simultaneous threads with the
 ///       same command list handle.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -4075,7 +4075,7 @@ zeCommandListAppendLaunchKernel(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Launch kernel cooperatively over one or more work groups.
-/// 
+///
 /// @details
 ///     - The application must ensure the kernel and events are accessible by
 ///       the device on which the command list was created.
@@ -4090,7 +4090,7 @@ zeCommandListAppendLaunchKernel(
 ///     - The implementation of this function should be lock-free.
 ///     - Use ::zeKernelSuggestMaxCooperativeGroupCount to recommend max group
 ///       count for device for cooperative functions that device supports.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -4124,7 +4124,7 @@ zeCommandListAppendLaunchCooperativeKernel(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Launch kernel over one or more work groups using indirect arguments.
-/// 
+///
 /// @details
 ///     - The application must ensure the kernel and events are accessible by
 ///       the device on which the command list was created.
@@ -4140,7 +4140,7 @@ zeCommandListAppendLaunchCooperativeKernel(
 ///     - This function may **not** be called from simultaneous threads with the
 ///       same command list handle.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -4176,7 +4176,7 @@ zeCommandListAppendLaunchKernelIndirect(
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Launch multiple kernels over one or more work groups using an array of
 ///        indirect arguments.
-/// 
+///
 /// @details
 ///     - The application must ensure the kernel and events are accessible by
 ///       the device on which the command list was created.
@@ -4193,7 +4193,7 @@ zeCommandListAppendLaunchKernelIndirect(
 ///     - This function may **not** be called from simultaneous threads with the
 ///       same command list handle.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -4233,13 +4233,13 @@ zeCommandListAppendLaunchMultipleKernelsIndirect(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Makes memory resident for the device.
-/// 
+///
 /// @details
 ///     - The application must ensure the memory is resident before being
 ///       referenced by the device
 ///     - The application may call this function from simultaneous threads.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -4268,7 +4268,7 @@ zeContextMakeMemoryResident(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Allows memory to be evicted from the device.
-/// 
+///
 /// @details
 ///     - The application must ensure the device is not currently referencing
 ///       the memory before it is evicted
@@ -4276,7 +4276,7 @@ zeContextMakeMemoryResident(
 ///       implicitly evicted when freed.
 ///     - The application may call this function from simultaneous threads.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -4305,13 +4305,13 @@ zeContextEvictMemory(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Makes image resident for the device.
-/// 
+///
 /// @details
 ///     - The application must ensure the image is resident before being
 ///       referenced by the device
 ///     - The application may call this function from simultaneous threads.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -4338,7 +4338,7 @@ zeContextMakeImageResident(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Allows image to be evicted from the device.
-/// 
+///
 /// @details
 ///     - The application must ensure the device is not currently referencing
 ///       the image before it is evicted
@@ -4346,7 +4346,7 @@ zeContextMakeImageResident(
 ///       implicitly evicted when destroyed.
 ///     - The application may call this function from simultaneous threads.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -4373,13 +4373,13 @@ zeContextEvictImage(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Creates sampler on the context.
-/// 
+///
 /// @details
 ///     - The application must only use the sampler for the device, or its
 ///       sub-devices, which was provided during creation.
 ///     - The application may call this function from simultaneous threads.
 ///     - The implementation of this function must be thread-safe.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -4411,7 +4411,7 @@ zeSamplerCreate(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Destroys sampler object
-/// 
+///
 /// @details
 ///     - The application must ensure the device is not currently referencing
 ///       the sampler before it is deleted.
@@ -4420,7 +4420,7 @@ zeSamplerCreate(
 ///     - The application must **not** call this function from simultaneous
 ///       threads with the same sampler handle.
 ///     - The implementation of this function must be thread-safe.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -4442,7 +4442,7 @@ zeSamplerDestroy(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Reserves pages in virtual address space.
-/// 
+///
 /// @details
 ///     - The application must only use the memory allocation on the context for
 ///       which it was created.
@@ -4455,7 +4455,7 @@ zeSamplerDestroy(
 ///     - The access attributes will default to none to indicate reservation is
 ///       inaccessible.
 ///     - The implementation of this function must be thread-safe.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -4487,14 +4487,14 @@ zeVirtualMemReserve(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Free pages in a reserved virtual address range.
-/// 
+///
 /// @details
 ///     - Any existing virtual mappings for the range will be unmapped.
 ///     - Physical allocations objects that were mapped to this range will not
 ///       be destroyed. These need to be destroyed explicitly.
 ///     - The application may call this function from simultaneous threads.
 ///     - The implementation of this function must be thread-safe.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -4523,11 +4523,11 @@ zeVirtualMemFree(
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Queries page size to use for aligning virtual memory reservations and
 ///        physical memory allocations.
-/// 
+///
 /// @details
 ///     - The application may call this function from simultaneous threads.
 ///     - The implementation of this function must be thread-safe.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -4557,14 +4557,14 @@ zeVirtualMemQueryPageSize(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Creates a physical memory object for the context.
-/// 
+///
 /// @details
 ///     - The application must only use the physical memory object on the
 ///       context for which it was created.
 ///     - The size must be page aligned. See ::zeVirtualMemQueryPageSize.
 ///     - The application may call this function from simultaneous threads.
 ///     - The implementation of this function must be thread-safe.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -4598,14 +4598,14 @@ zePhysicalMemCreate(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Destroys a physical memory object.
-/// 
+///
 /// @details
 ///     - The application must ensure the device is not currently referencing
 ///       the physical memory object before it is deleted
 ///     - The application must **not** call this function from simultaneous
 ///       threads with the same physical memory handle.
 ///     - The implementation of this function must be thread-safe.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -4630,7 +4630,7 @@ zePhysicalMemDestroy(
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Maps pages in virtual address space to pages from physical memory
 ///        object.
-/// 
+///
 /// @details
 ///     - The virtual address range must have been reserved using
 ///       ::zeVirtualMemReserve.
@@ -4642,7 +4642,7 @@ zePhysicalMemDestroy(
 ///       same size alignment used for the physical allocation.
 ///     - The application may call this function from simultaneous threads.
 ///     - The implementation of this function must be thread-safe.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -4682,13 +4682,13 @@ zeVirtualMemMap(
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Unmaps pages in virtual address space from pages from a physical
 ///        memory object.
-/// 
+///
 /// @details
 ///     - The page access attributes for virtual address range will revert back
 ///       to none.
 ///     - The application may call this function from simultaneous threads.
 ///     - The implementation of this function must be thread-safe.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -4719,12 +4719,12 @@ zeVirtualMemUnmap(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Set memory access attributes for a virtual address range.
-/// 
+///
 /// @details
 ///     - This function may be called from simultaneous threads with the same
 ///       function handle.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -4757,14 +4757,14 @@ zeVirtualMemSetAccessAttribute(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Get memory access attribute for a virtual address range.
-/// 
+///
 /// @details
 ///     - If size and outSize are equal then the pages in the specified virtual
 ///       address range have the same access attributes.
 ///     - This function may be called from simultaneous threads with the same
 ///       function handle.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -4798,14 +4798,14 @@ zeVirtualMemGetAccessAttribute(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Set global work offset for a kernel.
-/// 
+///
 /// @details
 ///     - The global work offset will be used when
 ///       a ::zeCommandListAppendLaunchKernel() variant is called.
 ///     - The application must **not** call this function from simultaneous
 ///       threads with the same kernel handle.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -4829,15 +4829,15 @@ zeKernelSetGlobalOffsetExp(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Reserve Cache on Device
-/// 
+///
 /// @details
 ///     - The application may call this function but may not be successful as
 ///       some other application may have reserve prior
-/// 
+///
 /// @remarks
 ///   _Analogues_
 ///     - None
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -4863,11 +4863,11 @@ zeDeviceReserveCacheExt(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Assign VA section to use reserved section
-/// 
+///
 /// @details
 ///     - The application may call this function to assign VA to particular
 ///       reservartion region
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -4895,7 +4895,7 @@ zeDeviceSetCacheAdviceExt(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Query event timestamps for a device or sub-device.
-/// 
+///
 /// @details
 ///     - The application may call this function from simultaneous threads.
 ///     - The implementation of this function must be thread-safe.
@@ -4907,11 +4907,11 @@ zeDeviceSetCacheAdviceExt(
 ///       device handle is parent device.
 ///     - The implementation may return all timestamps for sub-devices when
 ///       device handle is sub-device or may return 0 for count.
-/// 
+///
 /// @remarks
 ///   _Analogues_
 ///     - None
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -4940,17 +4940,17 @@ zeEventQueryTimestampsExp(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Query image memory properties.
-/// 
+///
 /// @details
 ///     - The application may call this function from simultaneous threads.
 ///     - The implementation of this function must be thread-safe.
 ///     - The implementation must support
 ///       ::ZE_experimental_image_memory_properties extension.
-/// 
+///
 /// @remarks
 ///   _Analogues_
 ///     - None
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -4974,7 +4974,7 @@ zeImageGetMemoryPropertiesExp(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Create image view on the context.
-/// 
+///
 /// @details
 ///     - The application must only use the image view for the device, or its
 ///       sub-devices, which was provided during creation.
@@ -4988,11 +4988,11 @@ zeImageGetMemoryPropertiesExp(
 ///     - Image views become disabled when their corresponding image resource is
 ///       destroyed.
 ///     - Use ::zeImageDestroy to destroy image view objects.
-/// 
+///
 /// @remarks
 ///   _Analogues_
 ///     - None
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
@@ -5028,7 +5028,7 @@ zeImageViewCreateExp(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Provide kernel scheduling hints that may improve performance
-/// 
+///
 /// @details
 ///     - The scheduling hints may improve performance only and are not required
 ///       for correctness.
@@ -5039,7 +5039,7 @@ zeImageViewCreateExp(
 ///     - The application must not call this function from simultaneous threads
 ///       with the same kernel handle.
 ///     - The implementation of this function should be lock-free.
-/// 
+///
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
