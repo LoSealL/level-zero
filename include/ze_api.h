@@ -620,6 +620,20 @@ zeInit(
     );
 
 ///////////////////////////////////////////////////////////////////////////////
+/// @brief Release the 'oneAPI' driver(s) in the static library
+///
+/// @details
+///     When loading drivers through shared library ze_loader.dll(.so), the driver
+///     context will be destroyed on dll detach. However if we link driver through
+///     static library, we have to destroy driver context explicitly.
+///
+/// @returns
+///     - ::ZE_RESULT_SUCCESS
+///     - ::ZE_RESULT_ERROR_UNINITIALIZED
+ze_result_t ZE_APICALL
+zeDeinit();
+
+///////////////////////////////////////////////////////////////////////////////
 /// @brief Retrieves driver instances
 /// 
 /// @details

@@ -20,6 +20,9 @@ namespace ze_lib
     ///////////////////////////////////////////////////////////////////////////////
     context_t::context_t()
     {
+#ifndef DYNAMIC_LOAD_LOADER
+        loader::context = new loader::context_t;
+#endif
     };
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -27,6 +30,8 @@ namespace ze_lib
     {
 #ifdef DYNAMIC_LOAD_LOADER
         FREE_DRIVER_LIBRARY( loader );
+#else
+        delete loader::context;
 #endif
     };
 

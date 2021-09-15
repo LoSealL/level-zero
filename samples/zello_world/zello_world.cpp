@@ -5,6 +5,10 @@
  * SPDX-License-Identifier: MIT
  *
  */
+#ifdef _WIN32
+#define _CRTDBG_MAP_ALLOC
+#include <crtdbg.h>
+#endif
 #include <stdlib.h>
 #include <memory>
 
@@ -33,6 +37,9 @@ void print_loader_versions(){
 //////////////////////////////////////////////////////////////////////////
 int main( int argc, char *argv[] )
 {
+#ifdef _WIN32
+    _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+#endif
     if( argparse( argc, argv, "-null", "--enable_null_driver" ) )
     {
         putenv( const_cast<char *>( "ZE_ENABLE_NULL_DRIVER=1" ) );
@@ -147,5 +154,6 @@ int main( int argc, char *argv[] )
     zeEventDestroy(event);
     zeEventPoolDestroy(event_pool);
 
+    zeDeinit();
     return 0;
 }

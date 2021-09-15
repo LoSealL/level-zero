@@ -8,7 +8,6 @@ configure_file(
     @ONLY)
 
 add_library(${TARGET_NAME}
-    SHARED
         ${CMAKE_CURRENT_SOURCE_DIR}/ze_validation_layer.h
         ${CMAKE_CURRENT_SOURCE_DIR}/ze_validation_layer.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/ze_valddi.cpp

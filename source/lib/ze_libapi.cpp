@@ -11,6 +11,7 @@
  */
 #include "ze_lib.h"
 
+
 extern "C" {
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -42,6 +43,8 @@ zeInit(
     )
 {
     ze_result_t result = ZE_RESULT_SUCCESS;
+    if (!ze_lib::context) ze_lib::context = new ze_lib::context_t;
+  
     std::call_once(ze_lib::context->initOnce, [&result]() {
         result = ze_lib::context->Init();
     });
@@ -54,6 +57,28 @@ zeInit(
         return ZE_RESULT_ERROR_UNSUPPORTED_VERSION;
 
     return pfnInit( flags );
+}
+
+///////////////////////////////////////////////////////////////////////////////
+/// @brief Release the 'oneAPI' driver(s) in the static library
+///
+/// @details
+///     When loading drivers through shared library ze_loader.dll(.so), the
+///     driver context will be destroyed on dll detach. However if we link
+///     driver through static library, we have to destroy driver context
+///     explicitly.
+///
+/// @returns
+///     - ::ZE_RESULT_SUCCESS
+///     - ::ZE_RESULT_ERROR_UNINITIALIZED
+ze_result_t ZE_APICALL zeDeinit()
+{
+    if (ze_lib::context) {
+        delete ze_lib::context;
+        ze_lib::context = nullptr;
+        return ZE_RESULT_SUCCESS;
+    }
+    return ZE_RESULT_ERROR_UNINITIALIZED;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

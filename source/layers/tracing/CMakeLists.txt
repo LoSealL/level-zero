@@ -8,7 +8,7 @@ configure_file(
     @ONLY)
 
 add_library(${TARGET_NAME}
-    SHARED
+    STATIC
         ${CMAKE_CURRENT_SOURCE_DIR}/ze_tracing_layer.h
         ${CMAKE_CURRENT_SOURCE_DIR}/tracing.h
         ${CMAKE_CURRENT_SOURCE_DIR}/tracing_imp.h

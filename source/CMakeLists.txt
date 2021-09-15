@@ -13,7 +13,6 @@ configure_file(
 
 include(GNUInstallDirs)
 add_library(${TARGET_LOADER_NAME}
-    SHARED
     ""
     ${CMAKE_CURRENT_BINARY_DIR}/ZeLoaderVersion.rc
 )
@@ -21,7 +20,7 @@ add_library(${TARGET_LOADER_NAME}
 add_subdirectory(lib)
 add_subdirectory(loader)
 add_subdirectory(layers)
-add_subdirectory(drivers)
+# add_subdirectory(drivers)
 
 set_target_properties(${TARGET_LOADER_NAME} PROPERTIES
     VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}"
