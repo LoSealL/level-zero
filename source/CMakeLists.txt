@@ -13,6 +13,7 @@ configure_file(
 
 include(GNUInstallDirs)
 add_library(${TARGET_LOADER_NAME}
+    ${TARGET_LIB_TYPE}
     ""
     ${CMAKE_CURRENT_BINARY_DIR}/ZeLoaderVersion.rc
 )

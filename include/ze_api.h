@@ -643,7 +643,7 @@ zeInit(
 /// @returns
 ///     - ::ZE_RESULT_SUCCESS
 ///     - ::ZE_RESULT_ERROR_UNINITIALIZED
-ze_result_t ZE_APICALL
+ZE_APIEXPORT ze_result_t ZE_APICALL
 zeDeinit();
 
 ///////////////////////////////////////////////////////////////////////////////

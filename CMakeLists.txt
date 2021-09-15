@@ -116,8 +116,14 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/source/wrapper/include)
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
 
 set(TARGET_LOADER_NAME ze_loader)
+set(TARGET_LIB_TYPE SHARED)
 
-
+if(NOT BUILD_SHARED)
+    # build static library instead of shared library
+    # hence don't need to and won't export functions
+    add_definitions(-DZE_APIEXPORT= -DZE_DLLEXPORT=)
+    set(TARGET_LIB_TYPE STATIC)
+endif()
 add_subdirectory(source)
 add_subdirectory(samples)
 
