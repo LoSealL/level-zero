@@ -125,7 +125,7 @@ if(NOT BUILD_SHARED)
     set(TARGET_LIB_TYPE STATIC)
 endif()
 add_subdirectory(source)
-add_subdirectory(samples)
+# add_subdirectory(samples)
 
 include("os_release_info.cmake")
 get_os_release_info(os_name os_version os_codename)

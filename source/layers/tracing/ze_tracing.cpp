@@ -89,7 +89,11 @@ zelLoaderGetVersion(zel_component_version_t *version)
 {
     if(version == nullptr)
         return ZE_RESULT_ERROR_INVALID_NULL_POINTER;
+#if _WIN32
+    strncpy_s(version->component_name, ZEL_COMPONENT_STRING_SIZE, TRACING_COMP_NAME, ZEL_COMPONENT_STRING_SIZE);
+#else
     strncpy(version->component_name, TRACING_COMP_NAME, ZEL_COMPONENT_STRING_SIZE);
+#endif
     version->spec_version = ZE_API_VERSION_CURRENT;
     version->component_lib_version.major = LOADER_VERSION_MAJOR;
     version->component_lib_version.minor = LOADER_VERSION_MINOR;

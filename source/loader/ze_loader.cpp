@@ -164,7 +164,11 @@ namespace loader
 
     void context_t::add_loader_version(){
         zel_component_version_t version = {};
+#if _WIN32
+        strncpy_s(version.component_name, ZEL_COMPONENT_STRING_SIZE, LOADER_COMP_NAME, ZEL_COMPONENT_STRING_SIZE);
+#else
         strncpy(version.component_name, LOADER_COMP_NAME, ZEL_COMPONENT_STRING_SIZE);
+#endif
         version.spec_version = ZE_API_VERSION_CURRENT;
         version.component_lib_version.major = LOADER_VERSION_MAJOR;
         version.component_lib_version.minor = LOADER_VERSION_MINOR;
